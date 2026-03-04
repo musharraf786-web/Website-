@@ -21,7 +21,8 @@ let timesDB = {
   isha: "8:10 PM",
   jumma: "1:30 PM · Friday",
   eidFitr: "10 April 2026 · 9:00 AM",
-  eidAdha: "17 June 2026 · 9:30 AM"
+  eidAdha: "17 June 2026 · 9:30 AM",
+  hijri: "١ رمضان ١٤٤٧ هـ"
 };
 
 // 🌐 API for website
@@ -78,15 +79,16 @@ bot.onText(/\/update (.+)/, async (msg, match) => {
 
   // 🔁 Normalize keys
   const keyMap = {
-    fajr: "fajr",
-    zuhr: "zuhr",
-    asr: "asr",
-    maghrib: "maghrib",
-    isha: "isha",
-    jumma: "jumma",
-    eidfitr: "eidFitr",
-    eidadha: "eidAdha"
-  };
+  fajr: "fajr",
+  zuhr: "zuhr",
+  asr: "asr",
+  maghrib: "maghrib",
+  isha: "isha",
+  jumma: "jumma",
+  eidfitr: "eidFitr",
+  eidadha: "eidAdha",
+  hijri: "hijri"
+};
 
   if (!keyMap[key]) {
     return bot.sendMessage(chatId,
