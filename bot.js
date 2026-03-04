@@ -6,7 +6,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const token = '8673118424:AAHtYpieMHFObdXTV7ydazcK62pyxHbao20';
+const token = '8711486536:AAFLD6rzXMoTrhihQ0yrcrfShvu0u6-zmvc';
 const bot = new TelegramBot(token, { polling: true });
 
 // 🔐 Admin ID
