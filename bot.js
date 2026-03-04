@@ -10,7 +10,7 @@ const token = 'YOUR_TELEGRAM_BOT_TOKEN';
 const bot = new TelegramBot(token, { polling: true });
 
 // 🔐 Admin ID
-const ADMINS = [7216419737];
+const ADMINS = [7216419737,8361561237];
 
 // 📿 Database
 let timesDB = {
