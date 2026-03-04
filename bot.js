@@ -6,7 +6,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const token = 'YOUR_TELEGRAM_BOT_TOKEN';
+const token = '8673118424:AAHtYpieMHFObdXTV7ydazcK62pyxHbao20';
 const bot = new TelegramBot(token, { polling: true });
 
 // 🔐 Admin ID
