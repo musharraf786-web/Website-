@@ -7,40 +7,38 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-const token = "8711486536:AAFLD6rzXMoTrhihQ0yrcrfShvu0u6-zmvc"
+const token = process.env.BOT_TOKEN
+const MONGO_URL = process.env.MONGO_URL
 
 const bot = new TelegramBot(token,{polling:true})
 
 const ADMINS=[8361561237,7216419737]
 
-// MongoDB connection
-const client = new MongoClient(process.env.MONGO_URL)
+async function startServer(){
 
-let db
-
-async function connectDB(){
+const client = new MongoClient(MONGO_URL)
 await client.connect()
-db = client.db("masjid")
-console.log("MongoDB connected")
-}
 
-connectDB()
+const db = client.db("masjid")
 
+console.log("MongoDB Connected")
+
+// function to get data
 async function getTimes(){
-const data = await db.collection("times").findOne({name:"masjid"})
-return data
+return await db.collection("times").findOne({name:"masjid"})
 }
 
+// function to save
 async function saveTimes(data){
 await db.collection("times").updateOne(
-{ name:"masjid" },
+{ name:"masjid"},
 { $set:data },
 { upsert:true }
 )
 }
 
-// API for website
-app.get("/api/times", async (req,res)=>{
+// API
+app.get("/api/times", async(req,res)=>{
 const data = await getTimes()
 res.json(data)
 })
@@ -48,40 +46,35 @@ res.json(data)
 // Telegram start
 bot.onText(/\/start/, async msg=>{
 
-const times = await getTimes()
+const t = await getTimes()
 
-const text=`
-🕌 Sunni Jama Masjid Abu Hanifa
+bot.sendMessage(msg.chat.id,`
+🕌 Masjid Times
 
-Fajr: ${times.fajr}
-Zuhr: ${times.zuhr}
-Asr: ${times.asr}
-Maghrib: ${times.maghrib}
-Isha: ${times.isha}
-
-Jumma: ${times.jumma}
-`
-
-bot.sendMessage(msg.chat.id,text)
-
+Fajr: ${t.fajr}
+Zuhr: ${t.zuhr}
+Asr: ${t.asr}
+Maghrib: ${t.maghrib}
+Isha: ${t.isha}
+`)
 })
 
-// Update command
+// update
 bot.onText(/\/update (.+)/, async (msg,match)=>{
 
 const chatId=msg.chat.id
 const userId=msg.from.id
 
 if(!ADMINS.includes(userId)){
-return bot.sendMessage(chatId,"Admin only command")
+return bot.sendMessage(chatId,"Admin only")
 }
 
-const input=match[1].trim()
+const input=match[1]
 
 const first=input.indexOf(" ")
 
-let key=input.substring(0,first).toLowerCase()
-let value=input.substring(first+1)
+const key=input.substring(0,first).toLowerCase()
+const value=input.substring(first+1)
 
 const map={
 fajr:"fajr",
@@ -95,13 +88,13 @@ eidadha:"eidAdha",
 hijri:"hijri"
 }
 
-const dbData = await getTimes()
+const data = await getTimes() || {name:"masjid"}
 
-dbData[map[key]] = value
+data[map[key]] = value
 
-await saveTimes(dbData)
+await saveTimes(data)
 
-bot.sendMessage(chatId,"Updated successfully")
+bot.sendMessage(chatId,"✅ Updated")
 
 })
 
@@ -110,7 +103,7 @@ bot.onText(/\/list/, async msg=>{
 
 const t = await getTimes()
 
-let text="Current Times\n\n"
+let text="📋 Current Times\n\n"
 
 for(let k in t){
 text+=`${k} : ${t[k]}\n`
@@ -120,4 +113,10 @@ bot.sendMessage(msg.chat.id,text)
 
 })
 
-app.listen(process.env.PORT || 3000)
+app.listen(process.env.PORT || 3000,()=>{
+console.log("Server Running")
+})
+
+}
+
+startServer()
