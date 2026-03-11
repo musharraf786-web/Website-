@@ -16,7 +16,7 @@ const ADMINS=[8361561237,7216419737]
 
 /* ------------------- MongoDB ------------------- */
 
-mongoose.connect("MONGO_URI=mongodb+srv://musharraf:Musharraf7860@cluster0.5pjp3kv.mongodb.net/masjid?retryWrites=true&w=majority&appName=Cluster0")
+mongoose.connect("MONGO_URI=mongodb+srv://musharraf:Musharraf7860@cluster0.5pjp3kv.mongodb.net/?appName=Cluster0")
 
 const Times = mongoose.model("Times", new mongoose.Schema({
 fajr:String,
@@ -154,5 +154,6 @@ bot.sendMessage(msg.chat.id,text)
 bot.on("polling_error",err=>{
 console.log(err.message)
 })
+
 
 app.listen(3000,()=>console.log("Server running"))
